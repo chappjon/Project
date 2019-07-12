@@ -9,19 +9,19 @@ package ca.sheridancollege.project;
  *
  * @author Xiaohong Deng
  */
-public class Game {
+public class MachinePlayer extends Player {
+
+    public MachinePlayer(String name) {
+        super(name);
+    }
     
-    public DeckofCards shuffle(DeckofCards deck) {
-        DeckofCards result=new DeckofCards();
+    @Override
+    public void play(){
+    }
+    
+    public String toString() {
+        String result="";
         return result;
     }
     
-    public DeckofCards deal(DeckofCards deck) {
-        DeckofCards result=new DeckofCards();
-        return result;
-    }
-    
-    public boolean isWon(Player player) {
-        return true;
-    }
 }

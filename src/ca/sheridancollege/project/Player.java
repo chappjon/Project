@@ -12,7 +12,7 @@ package ca.sheridancollege.project;
 public abstract class Player 
 {
     private String playerID; //the unique ID for this player
-    
+    private DeckofCards hand;
     /**
      * A constructor that allows you to set the player's unique ID
      * @param name the unique ID to assign to this player.
@@ -20,6 +20,14 @@ public abstract class Player
     public Player(String name)
     {
         playerID= name;
+    }
+
+    public DeckofCards getHand() {
+        return hand;
+    }
+
+    public void setHand(DeckofCards hand) {
+        this.hand = hand;
     }
     
     /**
