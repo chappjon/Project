@@ -14,33 +14,44 @@ import java.util.ArrayList;
  */
 public class DeckofCards {
 
-        private int CardsSize = 60;
-	public Cards[] cards = new Cards[CardsSize];
+    public ArrayList<Cards> cards = new ArrayList();
 
-	
-        /**
-         * Use foreach loop to load the cards array with one of 
-         * each card in a standard card deck(one of each card value 
-         * with each suit.
-         */
-        public void generateCards()
-        {
-                int countCards = 0;
-		for(Cards.Color c: Cards.Color.values())
-                {
-                    for(Cards.Value v: Cards.Value.values())
-                    {
-                        cards[countCards] = (new Cards(c,v));
-                        countCards++;
-                    }
-                }//end outter for
-        }//end method
-        
-        /**
-         * shuffle the deck
-         */
-        public void shuffle() {
-        
-        }
 
+    /**
+     * Use foreach loop to load the cards array with one of 
+     * each card in a standard card deck(one of each card value 
+     * with each suit.
+     */
+    public void generateSet()
+    {
+        for(Cards.Color c: Cards.Color.values())
+            for(Cards.Value v: Cards.Value.values())
+                cards.add(new Cards(c,v));  
+        //end outter for
+    }//end method
+        
+    public String toString() {
+        String result="";
+        for (Cards card: cards) result+=card.toString()+ "|";
+        return result;
+    }
+    
+    public Cards getTop() {
+        if (cards.size()==0) return null;
+        else 
+            for (int i = cards.size()-1; i >=0; i--) {
+ 
+                if (!cards.get(i).getValue().equals(Cards.Value.DRAWFOUR) 
+                        && !cards.get(i).getValue().equals(Cards.Value.DRAWTWO)
+                        && !cards.get(i).getValue().equals(Cards.Value.REVERSE)
+                        && !cards.get(i).getValue().equals(Cards.Value.WILDCARD)
+                        && !cards.get(i).getValue().equals(Cards.Value.SKIP)
+                        )
+                    return cards.get(i);            
+            }
+            
+        return null;           
+
+    }
+    
 }

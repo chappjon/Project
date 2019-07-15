@@ -17,6 +17,13 @@ public class HumanPlayer extends Player{
     @Override
     public void play(){
     }
+    
+    public Cards play(int cardOrder, Cards matchCard){
+        
+        if (matchCard==null) return this.getHand().cards.remove(cardOrder);
+        if (this.getHand().cards.get(cardOrder).match(matchCard)) return this.getHand().cards.remove(cardOrder);
+        return null;    
+    }
     public String toString() {
         String result="";
         return result;

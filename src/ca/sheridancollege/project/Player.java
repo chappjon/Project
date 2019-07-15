@@ -12,14 +12,14 @@ package ca.sheridancollege.project;
 public abstract class Player 
 {
     private String playerID; //the unique ID for this player
-    private DeckofCards hand;
+    private DeckofCards hand=new DeckofCards();
     /**
      * A constructor that allows you to set the player's unique ID
      * @param name the unique ID to assign to this player.
      */
     public Player(String name)
     {
-        playerID= name;
+        this.playerID=name;
     }
 
     public DeckofCards getHand() {

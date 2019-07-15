@@ -19,6 +19,13 @@ public class MachinePlayer extends Player {
     public void play(){
     }
     
+    public Cards play(Cards matchCard){
+        for (int i = 0; i < this.getHand().cards.size(); i++) {
+          if (this.getHand().cards.get(i).match(matchCard)) return this.getHand().cards.remove(i);
+        }
+        return null;
+    }
+    
     public String toString() {
         String result="";
         return result;

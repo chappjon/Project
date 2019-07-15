@@ -55,4 +55,21 @@ public class Cards {
     public Color getColor() {
             return this.color;
     }
+    
+
+    
+    public String toString() {
+        return this.color + " " + this.value;
+    }
+    
+    public boolean match(Cards card) {
+        if (this.color==card.color || this. value==card.value) return true;
+        if (this.value==Cards.Value.DRAWFOUR ||
+                this.value==Cards.Value.DRAWTWO ||
+                this.value==Cards.Value.WILDCARD ||
+                this.value==Cards.Value.REVERSE ||
+                this.value==Cards.Value.SKIP) return true;
+        return false;
+    }
+    
 }
