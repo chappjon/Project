@@ -12,18 +12,19 @@
       <AnchorPane prefHeight="71.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
             <Label fx:id="label_machine2" layoutX="208.0" layoutY="27.0" prefHeight="17.0" prefWidth="149.0" text="Label" />
+            <Button fx:id="button_next" alignment="CENTER" contentDisplay="CENTER" layoutX="532.0" layoutY="19.0" mnemonicParsing="false" onAction="#machinePlay" text="Next" />
          </children>
       </AnchorPane>
    </top>
    <left>
-      <AnchorPane prefHeight="142.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="142.0" prefWidth="200.0">
          <children>
             <Label fx:id="label_machine3" layoutX="72.0" layoutY="81.0" text="Label" />
          </children>
       </AnchorPane>
    </left>
    <bottom>
-      <GridPane fx:id="gridpane_player" BorderPane.alignment="CENTER">
+      <GridPane fx:id="gridpane_player" prefHeight="150.0" prefWidth="534.0" BorderPane.alignment="CENTER">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -40,8 +41,9 @@
    <center>
       <AnchorPane prefHeight="123.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="label_deadwood" layoutX="86.0" layoutY="81.0" text="Label" />
-            <Button fx:id="button_draw" layoutX="74.0" layoutY="140.0" mnemonicParsing="false" onAction="#draw" text="Draw" />
+            <Label fx:id="label_deadwood" layoutX="80.0" layoutY="28.0" text="Label" />
+            <Label fx:id="label_status" layoutX="80.0" layoutY="81.0" text="Label" wrapText="true" />
+            <Button fx:id="button_draw" alignment="CENTER" contentDisplay="CENTER" layoutX="78.0" layoutY="127.0" mnemonicParsing="false" onAction="#draw" text="Draw" textAlignment="CENTER" />
          </children>
       </AnchorPane>
    </center>

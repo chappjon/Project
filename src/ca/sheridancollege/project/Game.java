@@ -11,7 +11,7 @@ package ca.sheridancollege.project;
  */
 public class Game {
     private Cards.Color gameColor=null;
-    private int nextPlayer=0;
+    private int currentPlayer=0;
     private Player[] playerList;
     private int direction=1;
 
@@ -32,12 +32,12 @@ public class Game {
     }
 
 
-    public int getNextPlayer() {
-        return nextPlayer;
+    public int getCurrentPlayer() {
+        return currentPlayer;
     }
 
-    public void setNextPlayer(int nextPlayer) {
-        this.nextPlayer = nextPlayer;
+    public void setCurrentPlayer(int nextPlayer) {
+        this.currentPlayer = nextPlayer;
     }
 
     public Player[] getPlayerList() {
@@ -53,7 +53,10 @@ public class Game {
 
     
     public DeckofCards shuffle(DeckofCards deck) {
-        DeckofCards result=deck;
+        DeckofCards result=new DeckofCards();
+        for (int i = deck.cards.size(); i >0; i--) {
+            result.cards.add(deck.cards.remove((int)(Math.random()*i)));
+        }
         return result;
     }
     
@@ -71,8 +74,9 @@ public class Game {
      * @return game result: 1 is won, 0 is continue, -1 is lost
      */
     public int isWon(Player player) {
-        int result=0;
-        return result;
+        if(player.getHand().cards.size()==0) return 1;
+        if(player.getHand().cards.size()>10) return -1;
+        return 0;
     }
     
     public Cards overwriteColor(Cards card){
@@ -81,11 +85,12 @@ public class Game {
     }
     
     public int next() {
-        int next=this.getNextPlayer()+this.getDirection();
+        int next=this.getCurrentPlayer()+this.getDirection();
         if (next>3) return next-4;
         if (next<0) return next+4;
         return next;
     }
+    
     
 
 }

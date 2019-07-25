@@ -33,30 +33,35 @@ public class FXMLDocumentGameBoardController implements Initializable {
     GridPane gridpane_player;
     
     @FXML
-    Label label_machine1, label_machine2, label_machine3, label_deadwood;
+    Label label_machine1, label_machine2, label_machine3, label_deadwood, label_status;
 
     @FXML
-    Button button_draw;
+    Button button_draw, button_next;
     
     public void draw(ActionEvent e) {
-        player.getHand().cards.add(deck.cards.get(0));
-        game.setNextPlayer(game.next());
-        machinePlay();
+
+        if (game.getCurrentPlayer()==0) {
+            player.getHand().cards.add(deck.cards.remove(0));
+            game.setCurrentPlayer(game.next());
+            machinePlay();
+        } else JOptionPane.showMessageDialog
+            (null, "It's not your turn.","Error",
+                    JOptionPane.ERROR_MESSAGE);
     }
 
     /**
      * display the latest status on the pane
      */
     public void display(){
-        label_machine1.setText(String.valueOf(machine[0].getHand().cards.size()));
-        label_machine2.setText(String.valueOf(machine[1].getHand().cards.size()));
-        label_machine3.setText(String.valueOf(machine[2].getHand().cards.size()));
+        label_machine1.setText(machine[0].getPlayerID()+" : "+String.valueOf(machine[0].getHand().cards.size())+ " card(s).");
+        label_machine2.setText(machine[1].getPlayerID()+" : "+String.valueOf(machine[1].getHand().cards.size())+ " card(s).");
+        label_machine3.setText(machine[2].getPlayerID()+" : "+String.valueOf(machine[2].getHand().cards.size())+ " card(s).");
         for (int i = 0; i < machine.length; i++) {
-            System.out.println(machine[i].getHand());
+            System.out.println("Machine"+(i+1)+"'s hand: "+machine[i].getHand());
         }
 
-        if(deadwood.cards.size()==0) label_deadwood.setText("");
-        else label_deadwood.setText(game.overwriteColor(deadwood.getTop()).toString());
+        if(deadwood.getTop()==null) label_deadwood.setText("No card to match");
+        else label_deadwood.setText("The card to match is: "+ game.overwriteColor(deadwood.getTop()).toString());
         displayPlayer();
     }
     
@@ -71,7 +76,7 @@ public class FXMLDocumentGameBoardController implements Initializable {
                 });
                 button.setText(playerHand.cards.get(i).toString()); 
                 if(i<5) gridpane_player.add(button, 0, i);
-                else gridpane_player.add(button, 0, i-5);
+                else gridpane_player.add(button, 1, i-5);
                 gridpane_player.setHalignment(button, HPos.CENTER);
         }
 
@@ -81,15 +86,15 @@ public class FXMLDocumentGameBoardController implements Initializable {
 
         if (card.getValue()==Cards.Value.REVERSE)
             game.setDirection(-game.getDirection());
-        game.setNextPlayer(game.next());
+        game.setCurrentPlayer(game.next());
         if (card.getValue()==Cards.Value.WILDCARD) game.setGameColor(card.getColor());
         if (card.getValue()==Cards.Value.DRAWTWO) {              
             for (int i = 0; i < 2; i++) 
-                game.getPlayerList()[game.getNextPlayer()].getHand().cards.add(deck.cards.remove(0));
+                game.getPlayerList()[game.getCurrentPlayer()].getHand().cards.add(deck.cards.remove(0));
         }
         if (card.getValue()==Cards.Value.DRAWTWO) {
             for (int i = 0; i < 4; i++) 
-                game.getPlayerList()[game.getNextPlayer()].getHand().cards.add(deck.cards.remove(0));
+                game.getPlayerList()[game.getCurrentPlayer()].getHand().cards.add(deck.cards.remove(0));
         }
         if (card.getValue()!=Cards.Value.SKIP) game.setGameColor(null);
     
@@ -102,45 +107,80 @@ public class FXMLDocumentGameBoardController implements Initializable {
     
     }
     
-
+    private void recycle() {
+        Cards matchCard=deadwood.getTop();
+        for (int i = 0; i < deadwood.cards.size() || deadwood.cards.get(0)==matchCard; i++) {
+            deck.cards.add(deadwood.cards.remove(0));    
+        }
+    }
+    
+    private Cards nextCard() {
+        if (deck.cards.size()==0) {
+            recycle();
+            game.shuffle(deck);
+        }
+        return deck.cards.remove(0);
+    }
     
 
     
     public void endGame(Player player, int result){
-    
+        display();
+        String message;
+        if (result==1) message=" Win!";
+        else message=" Lose!";
+        JOptionPane.showMessageDialog
+                (null, player.getPlayerID()+message,"Game Over",
+                        JOptionPane.PLAIN_MESSAGE);
+        System.exit(0);
     }
     
 
     public void play(ActionEvent e){
-        Node source = (Node)e.getSource();
-        int cardOrder=gridpane_player.getRowIndex(source)+gridpane_player.getColumnIndex(source)*5;
-        Cards card=player.play(cardOrder, game.overwriteColor(deadwood.getTop()));
-        if (card==null) JOptionPane.showMessageDialog
-            (null, "The card you selected is not a valid card.","Error",
-                    JOptionPane.ERROR_MESSAGE);
-        else {
-            actOnCard(card);  
-            if (game.isWon(player)==1) endGame(player,1);
-            if (game.isWon(player)==-1) endGame(player,-1);
+        if (game.getCurrentPlayer()==0){
+            Node source = (Node)e.getSource();
+            int cardOrder=gridpane_player.getRowIndex(source)+gridpane_player.getColumnIndex(source)*5;
+            Cards card=player.play(cardOrder, game.overwriteColor(deadwood.getTop()));
+        
+            if (card==null) JOptionPane.showMessageDialog
+                (null, "The card you selected is not a valid card.","Error",
+                        JOptionPane.ERROR_MESSAGE);
+            else {
+                actOnCard(card);  
+                if (game.isWon(player)==1) endGame(player,1);
+                if (game.isWon(player)==-1) endGame(player,-1);
 
-            machinePlay();
-        }
+                machinePlay();
+            }
+        } else JOptionPane.showMessageDialog
+                (null, "You are not the current player.","Error",
+                        JOptionPane.ERROR_MESSAGE);
     }
     
-    private void machinePlay(){
+    public void machinePlay(){
         Cards card;
-        while (game.getNextPlayer()!=0) {
-            MachinePlayer currentPlayer=(MachinePlayer)(game.getPlayerList()[game.getNextPlayer()]);
+        if (game.getCurrentPlayer()!=0) {
+            MachinePlayer currentPlayer=(MachinePlayer)(game.getPlayerList()[game.getCurrentPlayer()]);
             card=currentPlayer.play(game.overwriteColor(deadwood.getTop()));
             if(card==null) {
                 currentPlayer.getHand().cards.add(deck.cards.remove(0));
-                game.setNextPlayer(game.next());
+                game.setCurrentPlayer(game.next());
+                label_status.setText(currentPlayer.getPlayerID()+" draws. "+
+                        "current player is "+game.getPlayerList()[game.getCurrentPlayer()].getPlayerID());
             }
-            else actOnCard(card);
+            else {
+                actOnCard(card);
+                label_status.setText(currentPlayer.getPlayerID()+" plays " +card.toString()+
+                        ". Current player is "+game.getPlayerList()[game.getCurrentPlayer()].getPlayerID());
+            }
+            
             if (game.isWon(currentPlayer)==1) endGame(currentPlayer,1);
             if (game.isWon(currentPlayer)==-1) endGame(currentPlayer,-1);
-        }
-        display();
+            display();
+        } else JOptionPane.showMessageDialog
+            (null, "It's your turn.","Error",
+                    JOptionPane.ERROR_MESSAGE);
+
     }
     
 
@@ -156,14 +196,16 @@ public class FXMLDocumentGameBoardController implements Initializable {
        deadwood=new DeckofCards();
        deck.generateSet();
        deck=game.shuffle(deck);
-       player=new HumanPlayer("human");
+       player=new HumanPlayer("Human");
        player.setHand(game.deal(deck));
        for (int i = 0; i < machine.length; i++) {
-            machine[i]=new MachinePlayer("machine");
+            machine[i]=new MachinePlayer("Machine"+(i+1));
             machine[i].setHand(game.deal(deck));          
        }
+       deadwood.cards.add(deck.cards.remove(0));
        game.setPlayerList(new Player[]{player, machine[0],machine[1],machine[2]});
-       game.setNextPlayer(0);
+       game.setCurrentPlayer(0);
+       label_status.setText("");
        display();
        
        
