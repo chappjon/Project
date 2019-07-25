@@ -1,6 +1,6 @@
 /**
  * -SYST 17796 Project - UNO card game.
- * @author Xiaohong, Seo, Jonathon, Muhammad , 07 12 2019 * 
+ * @author Xiaohong, Seo, Jonathon, Muhammad , 07 12 2019 hi* 
  */
 package ca.sheridancollege.project;
 
