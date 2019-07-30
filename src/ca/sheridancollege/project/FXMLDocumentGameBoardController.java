@@ -47,6 +47,8 @@ public class FXMLDocumentGameBoardController implements Initializable {
         } else JOptionPane.showMessageDialog
             (null, "It's not your turn.","Error",
                     JOptionPane.ERROR_MESSAGE);
+        if (game.isWon(player)==1) endGame(player,1);
+        if (game.isWon(player)==-1) endGame(player,-1);
     }
 
     /**
@@ -77,7 +79,7 @@ public class FXMLDocumentGameBoardController implements Initializable {
                 button.setText(playerHand.cards.get(i).toString()); 
                 if(i<5) gridpane_player.add(button, 0, i);
                 else gridpane_player.add(button, 1, i-5);
-                gridpane_player.setHalignment(button, HPos.CENTER);
+                gridpane_player.setHalignment(button, HPos.LEFT);
         }
 
     }
@@ -88,15 +90,15 @@ public class FXMLDocumentGameBoardController implements Initializable {
             game.setDirection(-game.getDirection());
         game.setCurrentPlayer(game.next());
         if (card.getValue()==Cards.Value.WILDCARD) game.setGameColor(card.getColor());
-        if (card.getValue()==Cards.Value.DRAWTWO) {              
+        else if (card.getValue()==Cards.Value.DRAWTWO) {              
             for (int i = 0; i < 2; i++) 
                 game.getPlayerList()[game.getCurrentPlayer()].getHand().cards.add(deck.cards.remove(0));
         }
-        if (card.getValue()==Cards.Value.DRAWTWO) {
+        else if (card.getValue()==Cards.Value.DRAWFOUR) {
             for (int i = 0; i < 4; i++) 
                 game.getPlayerList()[game.getCurrentPlayer()].getHand().cards.add(deck.cards.remove(0));
         }
-        if (card.getValue()!=Cards.Value.SKIP) game.setGameColor(null);
+        else if (card.getValue()!=Cards.Value.SKIP) game.setGameColor(null);
     
         deadwood.cards.add(card);
        
@@ -165,13 +167,13 @@ public class FXMLDocumentGameBoardController implements Initializable {
             if(card==null) {
                 currentPlayer.getHand().cards.add(deck.cards.remove(0));
                 game.setCurrentPlayer(game.next());
-                label_status.setText(currentPlayer.getPlayerID()+" draws. "+
-                        "current player is "+game.getPlayerList()[game.getCurrentPlayer()].getPlayerID());
+                label_status.setText(currentPlayer.getPlayerID()+" drew new card. "+
+                        "\n Now it is "+game.getPlayerList()[game.getCurrentPlayer()].getPlayerID() +"'s turn.");
             }
             else {
                 actOnCard(card);
-                label_status.setText(currentPlayer.getPlayerID()+" plays " +card.toString()+
-                        ". Current player is "+game.getPlayerList()[game.getCurrentPlayer()].getPlayerID());
+                label_status.setText(currentPlayer.getPlayerID()+" played " +card.toString()+
+                        ". \n Now it is "+game.getPlayerList()[game.getCurrentPlayer()].getPlayerID() + "'s turn. ");
             }
             
             if (game.isWon(currentPlayer)==1) endGame(currentPlayer,1);
@@ -188,9 +190,7 @@ public class FXMLDocumentGameBoardController implements Initializable {
      * Initializes the controller class.
      */
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-       
+    public void initialize(URL url, ResourceBundle rb) {       
         
        deck=new DeckofCards();
        deadwood=new DeckofCards();
@@ -202,7 +202,7 @@ public class FXMLDocumentGameBoardController implements Initializable {
             machine[i]=new MachinePlayer("Machine"+(i+1));
             machine[i].setHand(game.deal(deck));          
        }
-       deadwood.cards.add(deck.cards.remove(0));
+       while (deadwood.getTop()==null) deadwood.cards.add(deck.cards.remove(0));
        game.setPlayerList(new Player[]{player, machine[0],machine[1],machine[2]});
        game.setCurrentPlayer(0);
        label_status.setText("");

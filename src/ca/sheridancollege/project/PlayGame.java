@@ -36,6 +36,7 @@ public class PlayGame extends Application {
 //        });
         Scene scene = new Scene(root);
         
+        primaryStage.setTitle("Welcome to UNO game");
         primaryStage.setScene(scene);
         primaryStage.show();
         
